@@ -14,59 +14,7 @@
 
 <body>
 
-    <!-- ============================================================
-     LOGIN PAGE
-     ============================================================ -->
-    <div class="login-page show" id="loginPage">
-        <div class="login-card">
-            <div class="login-logo">
-                <div class="login-mark">B</div>
-                <div>
-                    <div style="font-family:var(--font-head);font-weight:800;font-size:16px">Baseline IT</div>
-                    <div style="font-size:11px;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase">Admin
-                        Panel</div>
-                </div>
-            </div>
-            <div class="login-title">Welcome back 👋</div>
-            <div class="login-sub">Sign in to manage your portfolio</div>
-            <div class="login-form">
-                <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <div class="input-icon-wrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="2" y="4" width="20" height="16" rx="2" />
-                            <polyline points="2,4 12,13 22,4" />
-                        </svg>
-                        <input type="email" class="form-input" placeholder="admin@baselineit.com"
-                            value="admin@baselineit.com">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <div class="input-icon-wrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" />
-                            <path d="M7 11V7a5 5 0 0110 0v4" />
-                        </svg>
-                        <input type="password" class="form-input" placeholder="••••••••" value="password">
-                    </div>
-                </div>
-                <div class="login-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" checked>
-                        Remember me
-                    </label>
-                    <span class="forgot-link">Forgot password?</span>
-                </div>
-                <button class="login-btn" onclick="doLogin()">Sign In to Dashboard</button>
-            </div>
-            <div class="login-footer">
-                Baseline IT Development &copy; 2025 &mdash; Admin v2.0
-            </div>
-        </div>
-    </div>
+    
 
     <!-- ============================================================
      MAIN APP SHELL
@@ -166,17 +114,20 @@
 
             <div class="sidebar-footer">
                 <div class="user-card">
-                    <div class="user-avatar">A</div>
+                    <div class="user-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
                     <div class="user-info">
-                        <div class="user-name">Admin User</div>
+                        <div class="user-name">{{ auth()->user()->name }}</div>
                         <div class="user-role">Super Administrator</div>
                     </div>
-                    <svg onclick="doLogout()"
-                        style="color:var(--text-3);cursor:pointer;width:16px;height:16px;flex-shrink:0"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
-                    </svg>
+                    <form method="POST" action="{{ route('admin.logout') }}" style="display:contents">
+                        @csrf
+                        <button type="submit" title="Logout"
+                            style="background:none;border:none;padding:0;margin:0;color:var(--text-3);cursor:pointer;width:16px;height:16px;flex-shrink:0;display:flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                            </svg>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>
