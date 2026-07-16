@@ -74,11 +74,57 @@ document.addEventListener('click', function(e) {
 });
 
 // ========== MODALS ===========
+// ========== MODALS ===========
 function openModal(id) {
   document.getElementById(id).classList.add('open');
 }
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// ========== INQUIRY REPLY MODAL ===========
+let currentInquiryId = null;
+
+function openReplyModal(id, name, email, phone, message, time) {
+  currentInquiryId = id;
+  document.getElementById('modalInquiryAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('modalInquiryName').textContent = name;
+  document.getElementById('modalInquiryContact').textContent = email + (phone ? ' · ' + phone : '');
+  document.getElementById('modalInquiryTime').textContent = 'Received: ' + time;
+  document.getElementById('modalInquiryMessage').textContent = message;
+
+  const waLink = document.getElementById('modalWhatsappLink');
+  const digitsOnly = (phone || '').replace(/\D/g, '');
+  waLink.href = digitsOnly ? 'https://wa.me/' + digitsOnly : '#';
+
+  openModal('replyModal');
+}
+
+function markInquiryRead() {
+  if (!currentInquiryId) return;
+
+  fetch(`/admin/inquiries/${currentInquiryId}/read`, {
+    method: 'PATCH',
+    headers: {
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+      'Accept': 'application/json'
+    }
+  })
+    .then(res => res.json())
+    .then(() => {
+      closeModal('replyModal');
+      showToast('Marked as read', 'info');
+      setTimeout(() => location.reload(), 800);
+    })
+    .catch(() => {
+      showToast('Something went wrong', 'error');
+    });
 }
 // Close on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Baseline IT — Admin Panel</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -14,7 +15,7 @@
 
 <body>
 
-    
+
 
     <!-- ============================================================
      MAIN APP SHELL
@@ -86,7 +87,7 @@
                         <polyline points="22,6 12,13 2,6" />
                     </svg>
                     Contact Inquiries
-                    <span class="nav-badge">5</span>
+                    <span class="nav-badge">{{ $unreadCount }}</span>
                 </div>
 
                 <div class="nav-section-label">System</div>
@@ -123,7 +124,8 @@
                         @csrf
                         <button type="submit" title="Logout"
                             style="background:none;border:none;padding:0;margin:0;color:var(--text-3);cursor:pointer;width:16px;height:16px;flex-shrink:0;display:flex">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
                                 <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
                             </svg>
                         </button>
@@ -231,7 +233,7 @@
                                 <div class="stat-icon orange">📩</div>
                                 <div class="stat-change up">↑ 24%</div>
                             </div>
-                            <div class="stat-value">5</div>
+                            <div class="stat-value">{{ $unreadCount }}</div>
                             <div class="stat-label">New Inquiries</div>
                         </div>
                         <div class="stat-card red">
@@ -882,8 +884,8 @@
                 </div>
 
                 <!-- ======================================================
-           PAGE: INQUIRIES
-           ====================================================== -->
+     PAGE: INQUIRIES
+     ====================================================== -->
                 <div class="page" id="page-inquiries">
                     <div class="section-header" style="margin-bottom:20px">
                         <div class="section-title">Contact Inquiries</div>
@@ -897,71 +899,30 @@
                         </div>
                     </div>
 
-                    <div class="inquiry-item unread" onclick="openModal('replyModal')">
-                        <div class="inquiry-avatar">A</div>
+                    @forelse ($inquiries as $inquiry)
+                    <div class="inquiry-item {{ $inquiry->is_read ? '' : 'unread' }}"
+                        onclick="openReplyModal({{ $inquiry->id }}, '{{ addslashes(str_replace(["\r", "\n"], ' ', $inquiry->full_name)) }}', '{{ addslashes($inquiry->email) }}', '{{ addslashes($inquiry->phone) }}', '{{ addslashes(str_replace(["\r", "\n"], ' ', $inquiry->project_details)) }}', '{{ $inquiry->created_at->diffForHumans() }}')"
+                        <div class="inquiry-avatar">{{ substr($inquiry->full_name, 0, 1) }}</div>
                         <div class="inquiry-content">
-                            <div class="inquiry-name">Ahmed Khan</div>
-                            <div class="inquiry-email">ahmed.khan@email.com &middot; +92 300 1234567</div>
-                            <div class="inquiry-msg">Hi, I need a complete brand identity package for my startup. Can
-                                you share your pricing and availability for next month?</div>
+                            <div class="inquiry-name">{{ $inquiry->full_name }}</div>
+                            <div class="inquiry-email">{{ $inquiry->email }} &middot; {{ $inquiry->phone }}</div>
+                            <div class="inquiry-msg">{{ $inquiry->project_details }}</div>
                         </div>
                         <div class="inquiry-meta">
-                            <div class="inquiry-time">2 min ago</div>
+                            <div class="inquiry-time">{{ $inquiry->created_at->diffForHumans() }}</div>
+                            @if (!$inquiry->is_read)
                             <span class="new-badge">New</span>
+                            @endif
                         </div>
                     </div>
-
-                    <div class="inquiry-item unread" onclick="openModal('replyModal')">
-                        <div class="inquiry-avatar av-blue">F</div>
-                        <div class="inquiry-content">
-                            <div class="inquiry-name">Fatima Malik</div>
-                            <div class="inquiry-email">fatima@company.pk &middot; fatima.malik@gmail.com</div>
-                            <div class="inquiry-msg">We're looking for social media creatives for our Ramadan campaign.
-                                Timeline is tight — 2 weeks. Please get back ASAP.</div>
-                        </div>
-                        <div class="inquiry-meta">
-                            <div class="inquiry-time">1 hr ago</div>
-                            <span class="new-badge">New</span>
-                        </div>
+                    @empty
+                    <div style="text-align:center;padding:40px;color:var(--text-3)">
+                        No inquiries yet.
                     </div>
+                    @endforelse
 
-                    <div class="inquiry-item" onclick="openModal('replyModal')">
-                        <div class="inquiry-avatar av-orange">Z</div>
-                        <div class="inquiry-content">
-                            <div class="inquiry-name">Zain Raza</div>
-                            <div class="inquiry-email">zain@techstartup.io</div>
-                            <div class="inquiry-msg">I saw your portfolio on LinkedIn. Loved the UI/UX work. Would love
-                                to discuss a potential long-term collaboration.</div>
-                        </div>
-                        <div class="inquiry-meta">
-                            <div class="inquiry-time">Yesterday</div>
-                        </div>
-                    </div>
-
-                    <div class="inquiry-item" onclick="openModal('replyModal')">
-                        <div class="inquiry-avatar av-purple">N</div>
-                        <div class="inquiry-content">
-                            <div class="inquiry-name">Nadia Sheikh</div>
-                            <div class="inquiry-email">nadia@bloombrand.com</div>
-                            <div class="inquiry-msg">Following up on our packaging design discussion. Could you send the
-                                final invoice when ready? Great work by the way!</div>
-                        </div>
-                        <div class="inquiry-meta">
-                            <div class="inquiry-time">2 days ago</div>
-                        </div>
-                    </div>
-
-                    <div class="inquiry-item" onclick="openModal('replyModal')">
-                        <div class="inquiry-avatar">T</div>
-                        <div class="inquiry-content">
-                            <div class="inquiry-name">Tariq Usman</div>
-                            <div class="inquiry-email">tariq.usman@retailpk.com</div>
-                            <div class="inquiry-msg">Hello, we need flyer and banner designs for our seasonal sale.
-                                Around 10 designs needed. What's your rate per design?</div>
-                        </div>
-                        <div class="inquiry-meta">
-                            <div class="inquiry-time">3 days ago</div>
-                        </div>
+                    <div style="margin-top:16px">
+                        {{ $inquiries->links() }}
                     </div>
                 </div>
 
@@ -1477,25 +1438,22 @@
                 <div
                     style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px;margin-bottom:18px;border:1px solid var(--border)">
                     <div style="display:flex;gap:10px;margin-bottom:10px">
-                        <div class="inquiry-avatar">A</div>
+                        <div class="inquiry-avatar" id="modalInquiryAvatar">A</div>
                         <div>
-                            <div style="font-weight:600;font-size:14px">Ahmed Khan</div>
-                            <div style="font-size:12px;color:var(--text-3)">ahmed.khan@email.com &middot; +92 300
-                                1234567</div>
-                            <div style="font-size:11px;color:var(--text-3);margin-top:2px">Received: 2 minutes ago</div>
+                            <div style="font-weight:600;font-size:14px" id="modalInquiryName"></div>
+                            <div style="font-size:12px;color:var(--text-3)" id="modalInquiryContact"></div>
+                            <div style="font-size:11px;color:var(--text-3);margin-top:2px" id="modalInquiryTime"></div>
                         </div>
                     </div>
-                    <p style="font-size:13px;color:var(--text-2);line-height:1.7">Hi, I need a complete brand identity
-                        package for my startup. Can you share your pricing and availability for next month?</p>
+                    <p style="font-size:13px;color:var(--text-2);line-height:1.7" id="modalInquiryMessage"></p>
                 </div>
                 <div class="form-group mb-16">
                     <label class="form-label">Reply Message</label>
                     <textarea class="form-textarea" placeholder="Type your reply here..."></textarea>
                 </div>
                 <div style="display:flex;gap:12px">
-                    <button class="btn btn-secondary" style="flex:1"
-                        onclick="closeModal('replyModal');showToast('Marked as read','info')">Mark as Read</button>
-                    <a href="https://wa.me/923001234567" class="btn btn-primary"
+                    <button class="btn btn-secondary" style="flex:1" onclick="markInquiryRead()">Mark as Read</button>
+                    <a href="#" id="modalWhatsappLink" target="_blank" class="btn btn-primary"
                         style="flex:1;justify-content:center;background:#25D366;border-color:#25D366;color:#fff">💬
                         Reply on WhatsApp</a>
                 </div>
@@ -1512,7 +1470,7 @@
     <!-- ============================================================
      JAVASCRIPT
      ============================================================ -->
-<script src="{{ asset('assets/js/admin.js') }}"></script>
+    <script src="{{ asset('assets/js/admin.js') }}"></script>
 </body>
 
 </html>
