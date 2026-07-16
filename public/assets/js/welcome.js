@@ -70,7 +70,6 @@ function closeModal() { document.getElementById('projectModal').classList.remove
 document.getElementById('projectModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
  
-function submitForm() { showToast("✅ Message sent! We'll reply within 2 hours."); }
  
 function showToast(msg) {
   const wrap = document.getElementById('toastWrap');
