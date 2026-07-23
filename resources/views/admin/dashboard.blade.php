@@ -31,7 +31,7 @@
                 <div class="logo-mark">B</div>
                 <div class="logo-text">
                     Baseline IT
-                    <span>Development Studio</span>
+                    <span>Development Studio...</span>
                 </div>
             </div>
 
